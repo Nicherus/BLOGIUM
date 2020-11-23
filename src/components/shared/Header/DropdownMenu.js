@@ -10,7 +10,10 @@ export default function DropdownMenu() {
 
   if (!user) history.push('/');
 
-  function onSignOutRequest() {}
+  function onSignOutRequest() {
+    setUser(null);
+    history.push('/');
+  }
 
   return (
     <Container>

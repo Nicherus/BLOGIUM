@@ -20,11 +20,35 @@ export default function SignUp() {
   const [error, setError] = useState(null);
   const history = useHistory();
 
-  if (user) history.push('/');
+  if (user) {
+    history.push(`/users/${user.id}`);
+  }
+
+  const register = async () => {
+    const body = {
+      'email': email,
+      'username': username,
+      'avatarUrl': avatarUrl,
+      'biography': biography,
+      'password': password,
+      'passwordConfirmation': passwordConfirmation,
+    };
+
+    try{
+      const data = await axios.post(`http://localhost:3000/api/users/sign-up`, body);
+      if(data){
+        setUser(data);
+        history.push('/sign-in');
+      }
+    } catch(error){
+      setError(error)
+      alert('Verifique sua internet!');
+    }
+  }
 
   return (
     <SignContainer screenRegistration>
-      <h1>Join Bootcampium</h1>
+      <h1>Join Blogium</h1>
       <h2>
         Create an account to personalize your homepage, follow your favorite authors and publications, applaud stories
         you love, and more.
@@ -78,7 +102,7 @@ export default function SignUp() {
           required
         />
         <ButtonBox>
-          <Button>Sign up</Button>
+          <Button onClick={() => register()} >Sign up</Button>
         </ButtonBox>
         {error && <ErrorBox>{error}</ErrorBox>}
       </SignUpForm>

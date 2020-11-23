@@ -17,7 +17,34 @@ export default function PostEdit() {
     history.push('/');
   }
 
-  function onPostSaveButtonClick() {}
+
+  function onPostSaveButtonClick() {
+    const body = {
+      'coverUrl': coverUrl,
+      'title': title,
+      'content': content,
+    };
+
+    if(coverUrl === '' && title === '' && content === ''){
+      return alert('Fill all the fields');
+    }
+
+    try{
+      setSaveButtonDisable(true);
+      const data = await axios.post(`http://localhost:3000/api/posts/`, body, {
+        headers:{
+          Authorization: user.token,
+        }
+      });
+      if(data){
+        setUser({...data, token: user.token});
+        history.push(`/posts/${data.id}`);
+      }
+    } catch(error){
+      setError(error);
+      alert('Verifique sua internet!');
+    }
+  }
 
   return (
     <PostManipulation

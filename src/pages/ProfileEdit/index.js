@@ -21,6 +21,29 @@ export default function ProfileEdit() {
     return null;
   }
 
+  const editUser = async () => {
+    const body = {
+      'username': username,
+      'avatarUrl': avatarUrl,
+      'biography': biography,
+    };
+
+    try{
+      const data = await axios.put(`http://localhost:3000/api/users/`, body, {
+        headers:{
+          Authorization: user.token,
+        }
+      });
+      if(data){
+        setUser({...data, token: user.token});
+        history.push(`/users/${data.id}`);
+      }
+    } catch(error){
+      setError(error);
+      alert('Verifique sua internet!');
+    }
+  }
+
   return (
     <SignContainer>
       <h1>Profile Edit</h1>
@@ -49,7 +72,7 @@ export default function ProfileEdit() {
           required
         />
         <ButtonBox>
-          <Button>Confirm</Button>
+          <Button onClick={() => editUser()} >Confirm</Button>
         </ButtonBox>
         {error && <ErrorBox>{error}</ErrorBox>}
       </ProfileEditForm>
