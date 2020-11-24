@@ -16,22 +16,21 @@ export default function SignIn() {
   const [error, setError] = useState(null);
   const history = useHistory();
 
-  const register = async () => {
+  const login = () => {
     const body = {
       'email': email,
       'password': password,
     };
-
-    try{
-      const data = await axios.post(`http://localhost:3000/api/users/sign-in`, body);
-      if(data){
-        setUser(data);
-        history.push(`/users/${data.id}`);
-      }
-    } catch(error){
+    
+    axios.post(`http://localhost:3000/api/users/sign-in`, body)
+    .then(({data}) => {
+      setUser(data);
+      history.push(`/users/${data.id}`);
+    })
+    .catch((error) => {
       setError(error);
       alert('Verifique sua internet!');
-    }
+    });
   }
 
   return (

@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import Modal from 'react-bootstrap/Modal';
+import ModalHeader from 'react-bootstrap/ModalHeader';
+import ModalTitle from 'react-bootstrap/ModalTitle';
+import ModalFooter from 'react-bootstrap/ModalFooter';
 import styled from 'styled-components';
 import { useParams, useHistory } from 'react-router-dom';
 import PreContent from '../../components/shared/PreContent';
@@ -16,12 +20,43 @@ export default function PostShow() {
   const [post, setPost] = useState(null);
   const { user } = useUserContext();
   const history = useHistory();
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   function onEditButtonClick() {
     history.push(`/posts/${postId}/edit`);
   }
 
-  function onDeleteButtonClick() {}
+  useEffect(() => {
+    axios.get(`http://localhost:3000/api/posts/${postId}`)
+    .then(({data}) => {
+      setPost(data);
+    })
+    .catch((error) => {
+      console.log(error);
+      alert('Verifique sua internet!');
+    });
+  }, [])
+
+
+
+  function onDeleteButtonClick() {
+    axios.delete(`http://localhost:3000/api/posts/${postId}`, {
+      headers:{
+        Authorization: user.token,
+      }
+    })
+    .then(({data}) => {
+      alert(data);
+      history.push(`/`);
+    })
+    .catch((error) => {
+      console.log(error);
+      alert('Verifique sua internet!');
+    });
+  }
 
   if (!post) return <Spinner />;
 
@@ -33,6 +68,20 @@ export default function PostShow() {
       <article>
         <section>
           <PostImage coverUrl={post.coverUrl} />
+          <Modal centered aria-labelledby="example-modal-sizes-title-lg" show={show} onHide={handleClose}>
+            <ModalHeader closeButton>
+              <ModalTitle>Please Confirm</ModalTitle>
+            </ModalHeader>
+            <Modal.Body>Are you sure do you want to delete this post?</Modal.Body>
+            <ModalFooter>
+              <Button variant="secondary" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button variant="primary" onClick={onDeleteButtonClick}>
+                Delete
+              </Button>
+            </ModalFooter>
+          </Modal>
           <EditionContainer isAdmin={isAdmin}>
             {user && <Claps post={post} />}
             {isAdmin && (
@@ -44,7 +93,7 @@ export default function PostShow() {
                 >
                   Edit
                 </Button>
-                <Button style={{ color: 'red', borderColor: 'red' }} onClick={onDeleteButtonClick}>
+                <Button style={{ color: 'red', borderColor: 'red' }} onClick={handleShow}>
                   Delete
                 </Button>
               </div>

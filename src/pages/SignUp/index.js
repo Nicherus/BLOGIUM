@@ -24,7 +24,8 @@ export default function SignUp() {
     history.push(`/users/${user.id}`);
   }
 
-  const register = async () => {
+  const register = (event) => {
+    event.preventDefault();
     const body = {
       'email': email,
       'username': username,
@@ -34,16 +35,15 @@ export default function SignUp() {
       'passwordConfirmation': passwordConfirmation,
     };
 
-    try{
-      const data = await axios.post(`http://localhost:3000/api/users/sign-up`, body);
-      if(data){
-        setUser(data);
-        history.push('/sign-in');
-      }
-    } catch(error){
+    axios.post(`http://localhost:3000/api/users/sign-up`, body)
+    .then(({data}) => {
+      setUser(data);
+      // history.push('/sign-in');
+    })
+    .catch((error) => {
       setError(error)
       alert('Verifique sua internet!');
-    }
+    });
   }
 
   return (
@@ -53,7 +53,7 @@ export default function SignUp() {
         Create an account to personalize your homepage, follow your favorite authors and publications, applaud stories
         you love, and more.
       </h2>
-      <SignUpForm>
+      <SignUpForm onSubmit={(e => register(e))}>
         <input
           type="text"
           value={username}
@@ -102,7 +102,7 @@ export default function SignUp() {
           required
         />
         <ButtonBox>
-          <Button onClick={() => register()} >Sign up</Button>
+          <Button type={"submit"} >Sign up</Button>
         </ButtonBox>
         {error && <ErrorBox>{error}</ErrorBox>}
       </SignUpForm>

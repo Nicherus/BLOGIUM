@@ -29,21 +29,21 @@ export default function PostEdit() {
       return alert('Fill all the fields');
     }
 
-    try{
-      setSaveButtonDisable(true);
-      const data = await axios.post(`http://localhost:3000/api/posts/`, body, {
-        headers:{
-          Authorization: user.token,
-        }
-      });
-      if(data){
-        setUser({...data, token: user.token});
-        history.push(`/posts/${data.id}`);
+    setSaveButtonDisable(true);
+    
+    axios.post(`http://localhost:3000/api/posts/`, body, {
+      headers:{
+        Authorization: user.token,
       }
-    } catch(error){
-      setError(error);
-      alert('Verifique sua internet!');
-    }
+    })
+    .then(({data}) => {
+      setUser({...data, token: user.token});
+      setSaveButtonDisable(true);
+      history.push(`/posts/${data.id}`);
+    })
+    .catch((error) => {
+      console.log(error);
+    })  
   }
 
   return (

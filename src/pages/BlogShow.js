@@ -5,7 +5,7 @@ import axios from 'axios';
 
 export default function BlogShow() {
   const params = useParams();
-  const userId = params.id;
+  const userId = params.userId;
 
   const [posts, setPosts] = useState([]);
   const [numberOfPosts, setNumberOfPosts] = useState(null);
@@ -19,15 +19,15 @@ export default function BlogShow() {
   }, [page])
 
   function getPages (){
-    try{
-      const data = axios.get(`http://localhost:3000/api/users/${userId}/posts/?offset=${offset}limit=${postsPerPage}`);
-      if(data){
-        setPosts(data);
-      }
-    } catch(error){
+    axios.get(`http://localhost:3000/api/users/${userId}/posts/?offset=${offset}limit=${postsPerPage}`)
+    .then(({data}) => {
+      setNumberOfPosts(data.count);
+      setPosts(data.posts);
+    })
+    .catch((error) => {
       console.log(error);
       alert('Verifique sua internet!');
-    }
+    });
   }
 
   function onPageChange(newPage) {

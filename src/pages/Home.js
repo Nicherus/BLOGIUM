@@ -10,19 +10,19 @@ export default function Home() {
   const postsPerPage = 5;
 
   useEffect(() => {
-    // getPages();
+    getPages();
   }, [page])
 
-  async function getPages(){
-    try{
-      const data = await axios.get(`http://localhost:3000/api/posts/?offset=${offset}&limit=${postsPerPage}`);
-      if(data){
-        setPosts(data);
-      }
-    } catch(error){
-      setError(error)
+  const getPages = () => {
+    axios.get(`http://localhost:3000/api/posts/?offset=${offset}&limit=${postsPerPage}`)
+    .then(({data}) => {
+      setNumberOfPosts(data.count)
+      setPosts(data.posts);
+    })
+    .catch((error) => {
+      setError(error);
       alert('Verifique sua internet!');
-    }
+    });
   }
 
   function onPageChange(newPage) {

@@ -21,6 +21,7 @@ export default function PostManipulation({
   onContentChange,
   onPostSaveButtonClick,
   postId,
+  isSaveButtonDisabled,
 }) {
   const { user } = useUserContext();
 
@@ -44,7 +45,7 @@ export default function PostManipulation({
         <Editor tag="div" text={content} onChange={onContentChange} options={editorOptions} />
       </PostContent>
       <PostActions>
-        <Button style={{ marginRight: '10px' }} onClick={onPostSaveButtonClick}>
+        <Button disabled={isSaveButtonDisabled} style={{ marginRight: '10px' }} onClick={onPostSaveButtonClick}>
           Save
         </Button>
         <CancelLink to={postId ? `/posts/${postId}` : '/'}>Cancel</CancelLink>
